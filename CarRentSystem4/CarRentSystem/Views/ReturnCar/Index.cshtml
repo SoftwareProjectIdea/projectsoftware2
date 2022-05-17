@@ -1,0 +1,73 @@
+﻿
+<div class="row">
+    <div class="col-sm-4">
+        @using (Html.BeginForm("Save", "ReturnCar", FormMethod.Post, new { id = "popupForm" }))
+        {
+            <div>
+                <h1>Car Rental</h1>
+            </div>
+            <div class="form-group">
+                <label class="form-lable">Car Number</label>
+                <input type="text" id="CarNumber" name="CarNumber"
+                       class="form-control" placeholder="Car Number" required />
+            </div>
+            <div class="form-group">
+                <label class="form-lable">Customer ID</label>
+                <input type="text" id="CustomerId" name="CustomerId"
+                       class="form-control" placeholder="Customer ID" required />
+            </div>
+            <div class="form-group">
+                <label class="form-lable">Date</label>
+                <input type="text" id="Date" name="Date"
+                       class="form-control" placeholder="Date" required />
+            </div>
+            <div class="form-group">
+                <label class="form-lable">Delay Time</label>
+                <input type="text" id="DelayTime" name="DelayTime"
+                       class="form-control" placeholder="Customer Name" required />
+            </div>
+            <div class="form-group">
+                <label class="form-lable">Fine</label>
+                <input type="text" id="Fine" name="Fine"
+                       class="form-control" placeholder="Fine" required />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        }
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script>
+    getCarId();
+        function getCarId() {
+            $("#CarNumber").keyup(function (e) {
+                $.ajax({
+                    type: 'Post',
+                    url: '/ReturnCar/getId?CarNumber=' + $("#CarNumber").val(),
+                    dataType: 'Json',
+                    success: function (data) {
+                        console.log(data)
+                        $('#CustomerId').val(data[0].CustomerId);
+                        $('#Date').val(new Date(parseInt(data[0].EndDate.substring(6))).toLocaleString());
+                        $('#DelayTime').val(data[0].DelayDays);
+                        var DelayTime = data[0].DelayDays;
+                        if (DelayTime > 0) {
+                            var Fine = DelayTime * 100;
+                            $('#Fine').val(Fine.toString());
+                        }
+                        else {
+                            $('#Fine').val("0");
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+}
+
+

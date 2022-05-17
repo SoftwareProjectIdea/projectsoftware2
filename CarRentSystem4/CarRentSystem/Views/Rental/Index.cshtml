@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Car_Rent_System.Models.RentViewModel>
+
+<div class="row">
+    <div class="col-lg-4">
+        @using (Html.BeginForm("Save", "Rental", FormMethod.Post, new { id = "popupForm" }))
+        {
+            <div>
+                <h1>Car Rental System</h1>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label class="form-lable">Car Number</label>
+                    <select class="form-control" id="CarId" name="CarId" placeholder="Car Number" required>
+                        <option>Please Select</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-lable">Customer ID</label>
+                    <input type="text" id="CustomerId" name="CustomerId"
+                           class="form-control" placeholder="Customer ID" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-lable">Customer Name</label>
+                    <input type="text" id="CustomerName" name="CustomerName"
+                           class="form-control" placeholder="Customer Name" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-lable">Rental Fee</label>
+                    <input type="text" id="Fee" name="Fee"
+                           class="form-control" placeholder="Fee=Number Of Days*100" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-lable">Start Date</label>
+                    <input type="date" id="StartDate" name="StartDate"
+                           class="form-control" placeholder="Rental fee" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-lable">End Date</label>
+                    <input type="date" id="EndDate" name="EndDate"
+                           class="form-control" placeholder="Rental fee" required />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-success" />
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-lg-8">
+        <table class="table">
+            <tr>
+                <th>Car Number</th>
+                <th>Customer Id</th>
+                <th>Fee</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Available</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CarId</td>
+                    <td>@item.CustomerId</td>
+                    <td>@item.Fee</td>
+                    <td>@item.StartDate</td>
+                    <td>@item.EndDate</td>
+                    <td>@item.Available</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script>
+        getCarDetails();
+        Load();
+        function Load() {
+            $("#CustomerId").prop('disabled', true);
+            $("#CustomerName").prop('disabled', true);
+            $("#Fee").prop('disabled', true);
+            $("#StartDate").prop('disabled', true);
+            $("#EndDate").prop('disabled', true);
+        }
+        function getCarDetails() {
+            $.ajax({
+                type: 'Get',
+                url: '/Rental/getCarDetails',
+                datatype: 'JSON',
+                success: function (data) {
+                    console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+                        $("#CarId").append($("<option/>", {
+                            text: data[i].CarNumber
+                        }));
+                    }
+                }
+            });
+        }
+        $("#CarId").change(function () {
+            getAvailableOrNot();
+        });
+        function getAvailableOrNot() {
+            $.ajax({
+                type: 'Post',
+                url: '/Rental/getAvailableOrNot?CarNumber=' + $("#CarId").val(),
+                datatype: 'JSON',
+                success: function (data) {
+                    console.log(data)
+                    var Available = data;
+                    if (Available == "yes") {
+                        $("#CustomerId").removeAttr('disabled');
+                        $("#CustomerName").removeAttr('disabled');
+                        $("#Fee").removeAttr('disabled');
+                        $("#StartDate").removeAttr('disabled');
+                        $("#EndDate").removeAttr('disabled');
+                    }
+                    else if (Available == "no") {
+                        $("#CustomerId").prop('disabled', true);
+                        $("#CustomerName").prop('disabled', true);
+                        $("#Fee").prop('disabled', true);
+                        $("#StartDate").prop('disabled', true);
+                        $("#EndDate").prop('disabled', true);
+                    }
+                }
+            });
+        }
+        getCustomerDetails();
+        function getCustomerDetails() {
+            $("#CustomerId").keyup(function (e) {
+                $.ajax({
+                    type: 'Post',
+                    url: '/Rental/GetId?Id=' + $("#CustomerId").val(),
+                    datatype: 'JSON',
+                    success: function (data) {
+                        $("#CustomerName").val(data)
+                    }
+                });
+            });
+        }
+    </script>
+}
+
