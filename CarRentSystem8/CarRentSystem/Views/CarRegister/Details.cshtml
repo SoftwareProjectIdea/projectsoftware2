@@ -1,0 +1,50 @@
+﻿@model Car_Rent_System.Models.CarRegister
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CarRegister</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CarNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CarNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CarBrand)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CarBrand)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CarModel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CarModel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Available)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Available)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CarId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
